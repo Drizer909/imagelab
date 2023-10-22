@@ -2,20 +2,26 @@ import React, { useState } from 'react';
 import { Icon, Button, ButtonGroup } from '@blueprintjs/core';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
+const INITIAL_SCALE = 1;
+
+const calculateInitialScale = ({ target: img }) => {
+  const imageWidth = img.naturalWidth;
+  const imageHeight = img.naturalHeight;
+
+  const viewerWidth = img.parentNode.clientWidth;
+  const viewerHeight = img.parentNode.clientHeight;
+
+  const scaleX = viewerWidth / imageWidth;
+  const scaleY = viewerHeight / imageHeight;
+
+  return Math.max(scaleX, scaleY);
+};
+
 const ImageViewer = ({ imageUrl }) => {
-  const [initialScale, setInitialScale] = useState(1);
+  const [initialScale, setInitialScale] = useState(INITIAL_SCALE);
 
   const handleImageLoad = ({ target: img }) => {
-    const imageWidth = img.naturalWidth;
-    const imageHeight = img.naturalHeight;
-
-    const viewerWidth = img.parentNode.clientWidth;
-    const viewerHeight = img.parentNode.clientHeight;
-
-    const scaleX = viewerWidth / imageWidth;
-    const scaleY = viewerHeight / imageHeight;
-
-    setInitialScale(Math.max(scaleX, scaleY));
+    setInitialScale(calculateInitialScale(img));
   };
 
   return (
@@ -32,7 +38,7 @@ const ImageViewer = ({ imageUrl }) => {
         >
           {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
             <React.Fragment>
-              <div className='tools' style={{ position: 'absolute', zIndex: 1, right: 0, top: 0 }}>
+              <div className="tools" style={{ position: 'absolute', zIndex: 1, right: 0, top: 0 }}>
                 <ButtonGroup>
                   <Button icon="zoom-in" onClick={() => zoomIn()} />
                   <Button icon="zoom-out" onClick={() => zoomOut()} />
@@ -40,10 +46,10 @@ const ImageViewer = ({ imageUrl }) => {
                 </ButtonGroup>
               </div>
               <TransformComponent>
-                <img 
-                  src={imageUrl} 
-                  alt="Image" 
-                  onLoad={handleImageLoad} 
+                <img
+                  src={imageUrl}
+                  alt="Image"
+                  onLoad={handleImageLoad}
                 />
               </TransformComponent>
             </React.Fragment>
